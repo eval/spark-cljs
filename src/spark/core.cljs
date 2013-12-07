@@ -16,9 +16,12 @@
         echo 9 13 5 17 1 | spark
         ▄▆▂█▁"))
 
+(defn print-graph [args]
+  (println "▁▂█▅▂"))
+
 (defn start [& args]
   (if (print-usage? args)
       (print-usage)
-      (println)))
+      (print-graph args)))
 
 (set! *main-cli-fn* start)
