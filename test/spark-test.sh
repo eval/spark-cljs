@@ -8,6 +8,10 @@ it_shows_help_with_no_argv() {
   $spark | grep USAGE
 }
 
+it_shows_help_with_dash_h() {
+  $spark -h | grep USAGE
+}
+
 it_graphs_argv_data() {
   graph="$($spark 1,5,22,13,5)"
 
