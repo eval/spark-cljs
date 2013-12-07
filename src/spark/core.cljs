@@ -1,6 +1,6 @@
 (ns spark.core)
 
-(defn start [& _]
+(defn print-usage []
   (println "
       USAGE:
         spark [-h] VALUE,...
@@ -12,5 +12,10 @@
         ▁▂▃▄▂█
         echo 9 13 5 17 1 | spark
         ▄▆▂█▁"))
+
+(defn start [& args]
+  (if (seq args)
+      (println)
+      (print-usage)))
 
 (set! *main-cli-fn* start)
