@@ -1,4 +1,5 @@
-(ns spark.core)
+(ns spark.core
+  (:require [clojure.string :as string]))
 
 (defn print-usage? [args]
   (or (not (seq args)) (= "-h" (first args))))
@@ -16,18 +17,24 @@
         echo 9 13 5 17 1 | spark
         ▄▆▂█▁"))
 
+(defn numbers [args]
+  (if (= 1 (count args))
+      (recur (string/split (first args) #","))
+      (map int args)))
+
 (defn print-graph [args]
   (let [ticks '(\▁  \▂  \▃  \▄  \▅  \▆  \▇  \█)
-        numbers (map int args)
+        numbers (numbers args)
         lower (apply min numbers)
         upper (apply max numbers)
         tick-diff (int (/ (* (- upper lower) 256) (dec (count ticks))))
         tick-pos (fn [x] (int (/ (* (- x lower) 256) tick-diff)))]
-    ;(println "min: " lower ", max: " upper ", diff: " tick-diff)
+    ;(println "args" args "numbers:" numbers "min: " lower ", max: " upper ", diff: " tick-diff)
     ;(println (map #(tick-pos %) numbers))
     (println (apply str (map #(nth ticks (tick-pos %)) numbers)))))
 
 (defn start [& args]
+  ;(println (type (first args)))
   (if (print-usage? args)
       (print-usage)
       (print-graph args)))
