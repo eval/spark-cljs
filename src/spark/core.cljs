@@ -1,5 +1,6 @@
 (ns spark.core
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            [cljs.nodejs :as node]))
 
 (defn print-usage? [args]
   (or (not (seq args)) (= "-h" (first args))))
@@ -33,10 +34,35 @@
     ;(println (map #(tick-pos %) numbers))
     (println (apply str (map #(nth ticks (tick-pos %)) numbers)))))
 
+(defn read-from-stdin? []
+  (not node/process.stdin.isTTY))
+
+;(def http (node/require "http"))
+;(def stdin (. node/process (stdin)))
+
 (defn start [& args]
-  ;(println (type (first args)))
-  (if (print-usage? args)
-      (print-usage)
-      (print-graph args)))
+  ;(println (not node/process.stdin.isTTY))
+  ;(if (not node/process.stdin.isTTY)
+  (if (read-from-stdin?)
+    (do
+      ;(println "reading from stdin!")
+      (. node/process.stdin (resume))
+      (.setEncoding node/process.stdin "utf8")
+      ;(println (. node/process.stdin (read)))
+      (.on node/process.stdin "data" (fn [e]
+                                       ;(println (string/ e)))))
+                                       (print-graph (conj '() (string/trim-newline e))))))
+      ;(.on node/process.stdin "readable" (fn [e]
+      ;                                  (println "stuff is readable")))
+  ;(.on node/process.stdin "close" (fn [e]
+  ;                                  (println "stuff is closed")))
+      ;(.on node/process.stdin "end" (fn [e]
+      ;                                  (println "ended"))))
+  ;(. stdin (resume))
+  ;(.setEncoding stdin "utf8")
+  ;(println (line-seq (java.io.BufferedReader. *in*)))
+    (if (print-usage? args)
+        (print-usage)
+        (print-graph args))))
 
 (set! *main-cli-fn* start)
