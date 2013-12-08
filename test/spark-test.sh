@@ -25,6 +25,14 @@ it_charts_pipe_data() {
   test $graph = '▁▂▃▄▂█'
 }
 
+it_charts_pipe_data_with_newlines() {
+  data="0 \n30 \n55 \n80 \n33 \n150"
+
+  graph="$(echo -e $data | $spark)"
+
+  test $graph = '▁▂▃▄▂█'
+}
+
 it_charts_spaced_data() {
   data="0 30 55 80 33 150"
   graph="$($spark $data)"
